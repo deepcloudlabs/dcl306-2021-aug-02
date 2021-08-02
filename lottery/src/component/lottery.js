@@ -66,7 +66,38 @@ class Lottery extends React.PureComponent {
         })
     }
 
-    render = () => {
+    render = () => { // reactjs -> functional programming
+        let numbersCard = "";
+        if(this.state.numbers.length > 0) {
+            numbersCard =  <div className="card">
+                        <div className="card-header">
+                            <div className="card-title"><h3>Lottery Numbers: {this.state.numbers.length}</h3></div>
+                        </div>
+                        <div className="card-body">
+                            <table className="table table-responsive table-striped table-hover table-bordered">
+                                <thead>
+                                <tr>
+                                    {
+                                        Array.from(Array(6).keys()).map( i =>
+                                            <th key={i}>Column #{i+1}</th>
+                                        )
+                                    }
+                                </tr>
+                                </thead>
+                                <tbody>{
+                                    this.state.numbers.map( nums =>
+                                        <tr>{
+                                            nums.map( number =>
+                                                <td key={number}>{number}</td>
+                                            )
+                                        }</tr>
+                                    )
+                                }</tbody>
+                            </table>
+                        </div>
+                    </div>;
+                }
+
        return (
           <div className="container">
               <div className="card">
@@ -92,33 +123,7 @@ class Lottery extends React.PureComponent {
                   </div>
               </div>
               <p></p>
-              <div className="card">
-                  <div className="card-header">
-                      <div className="card-title"><h3>Lottery Numbers: {this.state.numbers.length}</h3></div>
-                  </div>
-                  <div className="card-body">
-                      <table className="table table-responsive table-striped table-hover table-bordered">
-                          <thead>
-                            <tr>
-                                {
-                                    Array.from(Array(6).keys()).map( i =>
-                                        <th key={i}>Column #{i+1}</th>
-                                    )
-                                }
-                            </tr>
-                          </thead>
-                          <tbody>{
-                             this.state.numbers.map( nums =>
-                                 <tr>{
-                                    nums.map( number =>
-                                        <td key={number}>{number}</td>
-                                    )
-                                 }</tr>
-                             )
-                          }</tbody>
-                      </table>
-                  </div>
-              </div>
+              {numbersCard}
           </div>
        ) ;
     }
