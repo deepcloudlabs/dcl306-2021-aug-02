@@ -60,7 +60,14 @@ class Lottery extends React.PureComponent {
         return numbers
     }
 
-    handleInput = (event) => {
+    removeRow = async (rowIndex) => {
+        let newNumbers = [...this.state.numbers].filter((nums,index) => index!==rowIndex)
+        this.setState({
+            numbers: newNumbers
+        })
+    }
+
+    handleInput = async (event) => {
         this.setState({
             column: Number(event.target.value)
         })
@@ -82,15 +89,21 @@ class Lottery extends React.PureComponent {
                                             <th key={i}>Column #{i+1}</th>
                                         )
                                     }
+                                    <th>Operations</th>
                                 </tr>
                                 </thead>
                                 <tbody>{
-                                    this.state.numbers.map( nums =>
+                                    this.state.numbers.map( (nums,index) =>
                                         <tr>{
                                             nums.map( number =>
                                                 <td key={number}>{number}</td>
                                             )
-                                        }</tr>
+                                        }
+                                        <td>
+                                            <button onClick={ () => this.removeRow(index)}
+                                                    className="btn btn-danger">Remove</button>
+                                        </td>
+                                        </tr>
                                     )
                                 }</tbody>
                             </table>
@@ -118,7 +131,7 @@ class Lottery extends React.PureComponent {
                            <button onClick={this.draw}
                                className="btn btn-success">Draw</button>
                            <button onClick={this.reset}
-                                   className="btn btn-danger">Reset</button>
+                                   className="btn btn-warning">Reset</button>
                        </div>
                   </div>
               </div>
