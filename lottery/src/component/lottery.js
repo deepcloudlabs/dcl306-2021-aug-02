@@ -1,20 +1,37 @@
 import React from "react";
 
+// Stateful Component : State (numbers, column)
+// React: State -> setState (programmatically) -- automatically updates --> View (render)
+//                 View (<input type="text"></input>) -> ✘ automatically updates -> this.state.column
+// Two-way Binding: through coding?, it is not automatic!
+/*
+ {
+     this.state.numbers.map( nums =>
+         <tr>{
+            nums.map( number =>
+                <td key={number}>{number}</td>
+            )
+         }</tr>
+     )
+  }
+ */
 // class -> stateful component -> Tag: Lottery
 class Lottery extends React.PureComponent {
     constructor(props,context) {
         super(props,context);
         this.state = {
             numbers: [],
-            column: 0
+            column: 5
         }
         // this.get_lottery_numbers = this.get_lottery_numbers.bind(this);
     }
 
     draw = () => {
-        let lottery_numbers = this.get_lottery_numbers() ;
         let new_numbers= [...this.state.numbers] // cloning the array
-        new_numbers.push(lottery_numbers)
+        for (let i=0;i<this.state.column;++i){
+            let lottery_numbers = this.get_lottery_numbers() ;
+            new_numbers.push(lottery_numbers)
+        }
         this.setState({ // async!
             numbers: new_numbers
         },() => {
@@ -43,6 +60,12 @@ class Lottery extends React.PureComponent {
         return numbers
     }
 
+    handleInput = (event) => {
+        this.setState({
+            column: Number(event.target.value)
+        })
+    }
+
     render = () => {
        return (
           <div className="container">
@@ -53,7 +76,11 @@ class Lottery extends React.PureComponent {
                   <div className="card-body">
                        <div className="form-group">
                            <label htmlFor="column">Column:</label>
-                           <input type="text" id="column" name="column"
+                           <input type="text"
+                                  id="column"
+                                  name="column"
+                                  value={this.state.column}
+                                  onChange={this.handleInput}
                                   className="form-control"></input>
                        </div>
                        <div className="form-group">
@@ -67,7 +94,7 @@ class Lottery extends React.PureComponent {
               <p></p>
               <div className="card">
                   <div className="card-header">
-                      <div className="card-title"><h3>Lottery Numbers</h3></div>
+                      <div className="card-title"><h3>Lottery Numbers: {this.state.numbers.length}</h3></div>
                   </div>
                   <div className="card-body">
                       <table className="table table-responsive table-striped table-hover table-bordered">
