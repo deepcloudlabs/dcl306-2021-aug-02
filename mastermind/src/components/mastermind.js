@@ -20,6 +20,17 @@ export default class Mastermind extends React.PureComponent {
         }
     }
 
+    componentDidMount() {
+        let gameState = localStorage.getItem("mastermind-state")
+        if (gameState === null || gameState === undefined){
+            let state = {...this.state}
+            localStorage.setItem("mastermind-state", JSON.stringify(state))
+        } else {
+            let game = JSON.parse(gameState)
+            this.setState(game);
+        }
+    }
+
     createRandomDigit = (min,max) => {
         return Math.floor(Math.random()*(max-min+1))+min;
     }
@@ -74,34 +85,84 @@ export default class Mastermind extends React.PureComponent {
         let tries = this.state.tries;
         let moves = [...this.state.moves];
         let gameLevel = this.state.gameLevel;
+        let stats = {...this.state.statistics}
         tries++;
         if (this.state.secret === this.state.guess){
             gameLevel++;
             if (gameLevel>10){
-                //TODO: Player Wins!
+                stats.wins++;
+                this.setState({
+                    tries: 0,
+                    moves: [],
+                    gameLevel : 3,
+                    secret: this.createSecret(3),
+                    statistics: stats
+                }, () => {
+                    let state = {...this.state}
+                    localStorage.setItem("mastermind-state", JSON.stringify(state))
+                })
+                this.props.history.push("/wins");
             } else {
                 this.setState({
                     tries: 0,
                     moves: [],
                     gameLevel : gameLevel,
                     secret: this.createSecret(gameLevel)
+                }, () => {
+                    let state = {...this.state}
+                    localStorage.setItem("mastermind-state", JSON.stringify(state))
                 })
             }
         } else {
-            if (tries > 10){
-                //TODO: player loses
+            if (tries > 3){
+                stats.loses++;
+                this.setState({
+                    tries: 0,
+                    moves: [],
+                    secret: this.createSecret(gameLevel),
+                    statistics: stats
+                }, () => {
+                    let state = {...this.state}
+                    localStorage.setItem("mastermind-state", JSON.stringify(state))
+                })
+                this.props.history.push("/loses");
             } else {
                 let evaluation = this.evaluateMove(this.state.secret, this.state.guess);
                 moves.push(new Move(this.state.guess, evaluation));
-                this.setState({
+                this.setState({ // async
                     tries: tries,
                     moves: moves
+                }, () => {
+                    let state = {...this.state}
+                    localStorage.setItem("mastermind-state", JSON.stringify(state))
                 })
             }
         }
     }
-
     render = () => {
+        let tableMoves = "";
+        if (this.state.moves.length > 0){
+            tableMoves = <table className="table table-striped table-hover table-responsive table-bordered">
+                <thead>
+                <tr>
+                    <th>Guess</th>
+                    <th>Message</th>
+                </tr>
+                </thead>
+                <tbody>{
+                    this.state.moves.map( move =>
+                        <tr key={move.guess}>
+                            <td>{move.guess}</td>
+                            <td>{move.evaluation.evalstr}</td>
+                        </tr>
+                    )
+                }</tbody>
+            </table>;
+        }
+        let badgeTries = "";
+        if (this.state.tries>0){
+            badgeTries = <Badge label="Tries" value={this.state.tries} />
+        }
         return(
           <div className="container">
               <div className="card">
@@ -110,7 +171,7 @@ export default class Mastermind extends React.PureComponent {
                   </div>
                   <div className="card-body">
                       <Badge label="Game Level" value={this.state.gameLevel} />
-                      <Badge label="Tries" value={this.state.tries} />
+                      {badgeTries}
                       <Badge label="Secret" value={this.state.secret} />
                       <div className="form-group">
                           <label htmlFor="guess">Guess: </label>
@@ -124,23 +185,9 @@ export default class Mastermind extends React.PureComponent {
                           <button  onClick={this.play}
                                    className="btn btn-success">Play</button>
                       </div>
+                      <p></p>
                       <div className="form-group">
-                          <table className="table table-striped table-hover table-responsive table-bordered">
-                              <thead>
-                                <tr>
-                                    <th>Guess</th>
-                                    <th>Message</th>
-                                </tr>
-                              </thead>
-                              <tbody>{
-                                 this.state.moves.map( move =>
-                                     <tr key={move.guess}>
-                                         <td>{move.guess}</td>
-                                         <td>{move.evaluation.evalstr}</td>
-                                     </tr>
-                                 )
-                              }</tbody>
-                          </table>
+                          {tableMoves}
                       </div>
                   </div>
               </div>
