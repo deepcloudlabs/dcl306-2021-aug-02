@@ -1,4 +1,6 @@
 import React from "react";
+import GameStatistics from "./statistics";
+import CardTitle from "./card_title";
 
 export default class Mastermind extends React.PureComponent {
     constructor(props,context) {
@@ -10,8 +12,8 @@ export default class Mastermind extends React.PureComponent {
             moves: [],
             guess : 123,
             statistics: {
-                wins: 0,
-                loses: 0
+                wins: 3,
+                loses: 5
             }
         }
     }
@@ -19,7 +21,16 @@ export default class Mastermind extends React.PureComponent {
     render = () => {
         return(
           <div className="container">
-              Mastermind
+              <div className="card">
+                  <div className="card-header">
+                    <CardTitle title="Game Console" />
+                  </div>
+                  <div className="card-body">
+
+                  </div>
+              </div>
+              <p></p>
+              <GameStatistics stats={this.state.statistics} />
           </div>
         );
     }
