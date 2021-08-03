@@ -111,7 +111,7 @@ class Lottery extends React.PureComponent {
                     </div>;
                 }
 
-       return (
+       return ( // View
           <div className="container">
               <div className="card">
                   <div className="card-header">
