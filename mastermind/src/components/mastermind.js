@@ -2,6 +2,7 @@ import React from "react";
 import GameStatistics from "./statistics";
 import CardTitle from "./card_title";
 import Badge from "./badge";
+import Move from "../model/move";
 
 export default class Mastermind extends React.PureComponent {
     constructor(props,context) {
@@ -39,8 +40,54 @@ export default class Mastermind extends React.PureComponent {
         })
     }
 
-    play = () => {
+    evaluateMove = (secret,guess) => {
+        let secretAsString = secret.toString();
+        let guessAsString = guess.toString();
+        let perfectMatch = 0;
+        let partialMatch = 0;
+        for (let i=0;i<secretAsString.length;i++){
+            let s = secretAsString.charAt(i);
+            for (let j=0;j<guessAsString.length;j++){
+                let g = guessAsString.charAt(j);
+                if (s===g){
+                    if (i===j){
+                        perfectMatch++;
+                    }  else {
+                        partialMatch++;
+                    }
+                }
+            }
+        }
+        let evalstr = ""
+        if (perfectMatch === 0 && partialMatch === 0){
+            evalstr = "No match";
+        } else {
+            if (partialMatch>0)
+                evalstr = `-${partialMatch}`;
+            if (perfectMatch>0)
+                evalstr += `+${perfectMatch}`;
+        }
+        return {perfectMatch, partialMatch, evalstr}
+    }
 
+    play = () => {
+        let tries = this.state.tries;
+        let moves = [...this.state.moves];
+        tries++;
+        if (this.state.secret === this.state.guess){
+            //TODO: move to the next level
+        } else {
+            if (tries > 10){
+                //TODO: player loses
+            } else {
+                let evaluation = this.evaluateMove(this.state.secret, this.state.guess);
+                moves.push(new Move(this.state.guess, evaluation));
+                this.setState({
+                    tries: tries,
+                    moves: moves
+                })
+            }
+        }
     }
 
     render = () => {
@@ -65,6 +112,24 @@ export default class Mastermind extends React.PureComponent {
                       <div className="form-group">
                           <button  onClick={this.play}
                                    className="btn btn-success">Play</button>
+                      </div>
+                      <div className="form-group">
+                          <table className="table table-striped table-hover table-responsive table-bordered">
+                              <thead>
+                                <tr>
+                                    <th>Guess</th>
+                                    <th>Message</th>
+                                </tr>
+                              </thead>
+                              <tbody>{
+                                 this.state.moves.map( move =>
+                                     <tr key={move.guess}>
+                                         <td>{move.guess}</td>
+                                         <td>{move.evaluation.evalstr}</td>
+                                     </tr>
+                                 )
+                              }</tbody>
+                          </table>
                       </div>
                   </div>
               </div>
