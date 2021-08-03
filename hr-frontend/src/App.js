@@ -3,7 +3,9 @@ import Employee from "./model/employee";
 
 function HrApp() {
     let [employee, setEmployee] = useState(new Employee());
+    let [employees, setEmployees] = useState([]);
 
+    //region handle change methods
     function handleInputChange(event){
         const value = event.target.value;
         const name = event.target.name;
@@ -25,7 +27,35 @@ function HrApp() {
             setEmployee(emp)
         }
     }
+    //endregion
 
+    //region employee operations
+    function hireEmployee(){
+        fetch('http://localhost:4001/employees',{
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            },
+            body: JSON.stringify(employee)
+        })
+            .then(res => res.json())
+            .then(res => alert("Employee is hired!"))
+    }
+
+    function retrieveEmployees(){
+        fetch('http://localhost:4001/employees',{
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        })
+            .then(res => res.json())
+            // .then(emps => setEmployees(emps))
+            .then(setEmployees)
+    }
+
+    //endregion
     return (
         <div className="container">
             <div className="card">
@@ -41,6 +71,7 @@ function HrApp() {
                                name="identityNo"
                                onChange={handleInputChange}
                                value={employee.identityNo}></input>
+                        <button className="btn btn-success">Find Employee</button>
                     </div>
                     <div className="form-group">
                         <label htmlFor="fullname">Full name:</label>
@@ -108,6 +139,52 @@ function HrApp() {
                                checked={employee.fulltime}
                                onChange={handleInputChange}
                                name="fulltime" />
+                    </div>
+                    <div className="form-group">
+                        <button
+                            onClick={hireEmployee}
+                            className="btn btn-success">Hire Employee</button>
+                        <button className="btn btn-warning">Update Employee</button>
+                        <button className="btn btn-danger">Fire Employee</button>
+                        <button
+                            onClick={retrieveEmployees}
+                            className="btn btn-info">Retrieve All</button>
+                    </div>
+                    <p></p>
+                    <div className="form-group">
+                        <table className="table table-bordered table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <td>No</td>
+                                    <td>Identity No</td>
+                                    <td>Fullname</td>
+                                    <td>Iban</td>
+                                    <td>Salary</td>
+                                    <td>BirthYear</td>
+                                    <td>Department</td>
+                                    <td>Photo</td>
+                                    <td>Full time</td>
+                                    <td>Operations</td>
+                                </tr>
+                            </thead>
+                            <tbody>{
+                                employees.map( (emp,idx) =>
+                                    <tr key={emp.identityNo}>
+                                        <td>{idx+1}</td>
+                                        <td>{emp.identityNo}</td>
+                                        <td>{emp.fullname}</td>
+                                        <td>{emp.iban}</td>
+                                        <td>{emp.salary}</td>
+                                        <td>{emp.birthYear}</td>
+                                        <td>{emp.department}</td>
+                                        <td><img src={emp.photo} /></td>
+                                        <td>{emp.fulltime ? 'FULL TIME' : 'PART TIME'}</td>
+                                        <td><button className="btn btn-danger">Fire Employee</button> </td>
+                                    </tr>
+                                )
+                            }
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
