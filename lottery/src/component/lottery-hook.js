@@ -73,7 +73,6 @@ export default function LotteryHook(props){
             </div>
         </div>;
     }
-    console.log(numbers)
     return (
         <div className="container">
             <div className="card">
