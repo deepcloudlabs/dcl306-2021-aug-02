@@ -14,8 +14,8 @@ export default class Mastermind extends React.PureComponent {
             moves: [],
             guess : 123,
             statistics: {
-                wins: 3,
-                loses: 5
+                wins: 0,
+                loses: 0
             }
         }
     }
@@ -73,9 +73,20 @@ export default class Mastermind extends React.PureComponent {
     play = () => {
         let tries = this.state.tries;
         let moves = [...this.state.moves];
+        let gameLevel = this.state.gameLevel;
         tries++;
         if (this.state.secret === this.state.guess){
-            //TODO: move to the next level
+            gameLevel++;
+            if (gameLevel>10){
+                //TODO: Player Wins!
+            } else {
+                this.setState({
+                    tries: 0,
+                    moves: [],
+                    gameLevel : gameLevel,
+                    secret: this.createSecret(gameLevel)
+                })
+            }
         } else {
             if (tries > 10){
                 //TODO: player loses
