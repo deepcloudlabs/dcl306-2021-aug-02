@@ -43,6 +43,46 @@ function HrApp() {
             .then(res => alert("Employee is hired!"))
     }
 
+    function updateEmployee(){
+        fetch('http://localhost:4001/employees',{
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            },
+            body: JSON.stringify(employee)
+        })
+            .then(res => res.json())
+            .then(res => alert("Employee is updated!"))
+    }
+
+    function fireEmployee(calisan){
+        fetch(`http://localhost:4001/employees/${calisan.identityNo}`,{
+            method: "DELETE",
+            headers: {
+                "Accept": "application/json"
+            }
+        })
+            .then(res => res.json())
+            // .then(emp => setEmployee(emp))
+            .then((emp) =>{
+                setEmployee(emp);
+                setEmployees( employees.filter( e => e.identityNo !== calisan.identityNo ) );
+            })
+    }
+
+    function fireEmployeeByIdentityNo(){
+        fetch(`http://localhost:4001/employees/${employee.identityNo}`,{
+            method: "DELETE",
+            headers: {
+                "Accept": "application/json"
+            }
+        })
+            .then(res => res.json())
+            // .then(emp => setEmployee(emp))
+            .then(setEmployee)
+    }
+
     function findEmployee(){
         fetch(`http://localhost:4001/employees/${employee.identityNo}`,{
             method: "GET",
@@ -154,11 +194,12 @@ function HrApp() {
                                name="fulltime" />
                     </div>
                     <div className="form-group">
-                        <button
-                            onClick={hireEmployee}
+                        <button onClick={hireEmployee}
                             className="btn btn-success">Hire Employee</button>
-                        <button className="btn btn-warning">Update Employee</button>
-                        <button className="btn btn-danger">Fire Employee</button>
+                        <button  onClick={updateEmployee}
+                            className="btn btn-warning">Update Employee</button>
+                        <button onClick={fireEmployeeByIdentityNo}
+                            className="btn btn-danger">Fire Employee</button>
                         <button
                             onClick={retrieveEmployees}
                             className="btn btn-info">Retrieve All</button>
@@ -192,7 +233,8 @@ function HrApp() {
                                         <td>{emp.department}</td>
                                         <td><img src={emp.photo} /></td>
                                         <td>{emp.fulltime ? 'FULL TIME' : 'PART TIME'}</td>
-                                        <td><button className="btn btn-danger">Fire Employee</button> </td>
+                                        <td><button onClick={ () => fireEmployee(emp) }
+                                            className="btn btn-danger">Fire Employee</button> </td>
                                     </tr>
                                 )
                             }
