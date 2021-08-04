@@ -43,8 +43,20 @@ function HrApp() {
             .then(res => alert("Employee is hired!"))
     }
 
+    function findEmployee(){
+        fetch(`http://localhost:4001/employees/${employee.identityNo}`,{
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        })
+            .then(res => res.json())
+            // .then(emp => setEmployee(emp))
+            .then(setEmployee)
+    }
+
     function retrieveEmployees(){
-        fetch('http://localhost:4001/employees',{
+        fetch("http://localhost:4001/employees",{
             method: "GET",
             headers: {
                 "Accept": "application/json"
@@ -71,7 +83,8 @@ function HrApp() {
                                name="identityNo"
                                onChange={handleInputChange}
                                value={employee.identityNo}></input>
-                        <button className="btn btn-success">Find Employee</button>
+                        <button  onClick={findEmployee}
+                                 className="btn btn-success">Find Employee</button>
                     </div>
                     <div className="form-group">
                         <label htmlFor="fullname">Full name:</label>
