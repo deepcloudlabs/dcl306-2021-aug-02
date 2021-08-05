@@ -48,7 +48,7 @@ ws.on("message", data => {
         "quantity": frame.q,
         "timestamp": frame.E
     } ;
-	console.log(frame);
+	// console.log(frame);
     let trade = new Trade(model);
     trade.save((err,t) => {
          if (err) console.error(err);

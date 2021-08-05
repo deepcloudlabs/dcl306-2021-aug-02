@@ -1,11 +1,14 @@
 import LotteryHook from "./component/lottery-hook";
+import {Fragment} from "react";
 
 function App() { // stateless component vs stateful component -> View -> Component -> React Component -> Composite Pattern
   return (
-    <div>
+    <Fragment>
+
         <p></p>
-       <LotteryHook/>
-    </div>
+        <LotteryHook/>
+    </Fragment>
+
   );
 }
 
